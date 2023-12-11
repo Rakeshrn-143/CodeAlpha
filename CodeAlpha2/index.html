@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT Integration</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat-display"></div>
+    <input type="text" id="user-input" placeholder="Type here..." autocomplete="off">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chatDisplay = document.getElementById('chat-display');
+    const userInput = document.getElementById('user-input');
+
+    const socket = new WebSocket('ws://your-websocket-server'); // Replace with your WebSocket server URL
+
+    socket.addEventListener('open', (event) => {
+      console.log('WebSocket connection opened:', event);
+    });
+
+    socket.addEventListener('message', (event) => {
+      const message = event.data;
+      displayMessage(message, 'bot');
+    });
+
+    socket.addEventListener('close', (event) => {
+      console.log('WebSocket connection closed:', event);
+    });
+
+    function sendMessage() {
+      const userMessage = userInput.value;
+      displayMessage(userMessage, 'user');
+      socket.send(userMessage);
+
+      // Clear the input field after sending the message
+      userInput.value = '';
+    }
+
+    function displayMessage(message, sender) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add(sender);
+      messageElement.textContent = message;
+      chatDisplay.appendChild(messageElement);
+    }
+  </script>
+</body>
+</html>
